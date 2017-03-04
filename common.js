@@ -13,8 +13,54 @@ var view = {
     var cell = document.getElementById(location);
     cell.setAttribute("class", "miss");
   }
-}
+};
 
-view.displayHit("01");
+var model = {
+  boardSize: 7,
+  numShip: 3,
+  shipLength: 3,
+  shipsSunk: 0,
 
-view.displayMiss("04")
+  ships: [
+    {locations: ["06", "16", "26"], hits: ["", "", ""] },
+    {locations: ["24", "34", "44"], hits: ["", "", ""] },
+    {locations: ["10", "11", "12"], hits: ["", "", ""] }
+  ],
+
+  fire: function (guess) {
+    for(var i = 0; i < this.numShip; i++)
+    {
+      var ship = this.ships[i];
+      var index = ship.locations.indexOf(guess);
+
+      if(index >= 0)
+      {
+        ship.hits[index] = "hit";
+
+        view.displayHit(guess);
+        view.displayMessage("Hit!");
+
+        if(this.isSunk(ship)) {
+          view.displayMessage("You sank my battleship!");
+          this.shipsSunk++;
+        }
+
+        return true;
+      } // end if
+    } // end for
+
+    view.displayMiss(guess);
+    view.displayMessage("You missed.");
+
+    return false;
+  },
+
+  isSunk: function (ship) {
+    for(var i = 0; i < this.shipLength; i++)
+    {
+      if(ship.hits[i] !== "hit") { return false; }
+    }
+
+    return true;
+  }
+};
